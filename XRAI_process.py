@@ -1,7 +1,6 @@
 # imports
 import tensorflow as tf
 import numpy as np
-import PIL.Image
 import saliency.core as saliency
 from tensorflow.keras.models import load_model
 
@@ -9,11 +8,6 @@ from tensorflow.keras.models import load_model
 model = load_model('VGG16-Plant Disease-90.96.h5')
 def PreprocessVGGImage(im):
     im = tf.keras.applications.vgg16.preprocess_input(im)
-    return im
-def LoadImage(file_path):
-    im = PIL.Image.open(file_path)
-    im = im.resize((224,224))
-    im = np.asarray(im)
     return im
 
 def visual_XRAI(model):
@@ -38,8 +32,9 @@ def call_model_function(images, call_model_args=None, expected_keys=None):
                     saliency.base.CONVOLUTION_OUTPUT_GRADIENTS: gradients}
             
 
-def visual_XRAI(model, file_path):
-    original_img = LoadImage(file_path)
+def visual_XRAI(model, img):
+    original_img = img.resize((224, 224))
+    original_img = np.array(original_img)
     im = PreprocessVGGImage(original_img)
 
     predictions = model(np.array([im])) # _, predictions
@@ -47,8 +42,6 @@ def visual_XRAI(model, file_path):
     call_model_args = {class_idx_str: prediction_class}
 
     xrai_object = saliency.XRAI()
-    original_img = LoadImage(file_path)
-    im = PreprocessVGGImage(original_img) 
     # Compute XRAI attributions with default parameters
     xrai_attributions = xrai_object.GetMask(im,
                                             call_model_function,

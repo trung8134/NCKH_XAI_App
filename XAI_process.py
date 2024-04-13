@@ -1,17 +1,16 @@
-from keras.models import load_model
 import cv2
 import tensorflow as tf
-from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.vgg16 import preprocess_input
 import numpy as np
 
 layer = 'block5_conv3'
 target_size = (224, 224)
 
-def visual_GradCAM(model, layer, img_path, img_size=(224, 224)):
-    img_path = img_path
-    img = image.load_img(img_path, target_size=img_size)
-    x = image.img_to_array(img)
+def visual_GradCAM(model, layer, img):
+    # img_path = img_path
+    # img = image.load_img(img_path, target_size=img_size)
+    x = img.resize((224, 224))
+    x = np.array(x)
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
 
@@ -44,7 +43,7 @@ def visual_GradCAM(model, layer, img_path, img_size=(224, 224)):
 
     # Ghép heatmap lên ảnh gốc
     # Đọc và chuyển đổi ảnh gốc sang định dạng RGB
-    original_img = cv2.imread(img_path)
+    original_img = np.array(img)
     original_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2RGB)
     original_img = cv2.resize(original_img, (224, 224))  # Đảm bảo kích thước ảnh giống với kích thước input của mô hình
 
