@@ -1,7 +1,7 @@
-streamlit==1.33.0
-pillow==10.3.0
-tensorflow==2.16.1
-opencv-python==4.9.0.80
-matplotlib==3.8.4
+streamlit
+pillow
+tensorflow
+opencv-python
+matplotlib
 saliency tensorflow
-numpy==1.26.4
+numpy
