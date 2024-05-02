@@ -8,7 +8,6 @@ from XRAI_process import visual_XRAI
 import matplotlib.pyplot as plt
 import io
 
-
 model = load_model('VGG16-Plant Disease-90.96.h5')
 class_names = ['Corn Common Rust', 'Corn Gray Leaf Spot', 
                'Corn Healthy', 'Corn Northern Leaf Blight', 
