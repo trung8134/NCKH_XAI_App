@@ -7,8 +7,14 @@ from XAI_process import visual_GradCAM
 from XRAI_process import visual_XRAI
 import matplotlib.pyplot as plt
 import io
+import tensorflow as tf
 
-model = load_model('VGG16-Plant Disease-90.96.h5')
+
+# Load SavedModel pre
+model_pre = tf.saved_model.load('VGG16CBAM_V2_bn-PlantDisease-94.75')
+# Load model xai
+model_xai = load_model('VGG16-Plant Disease-90.96.h5')
+
 class_names = ['Corn Common Rust', 'Corn Gray Leaf Spot', 
                'Corn Healthy', 'Corn Northern Leaf Blight', 
                'Rice Brown Spot', 'Rice Healthy',
@@ -24,14 +30,14 @@ def process_image(image):
     
 def predict(image):
     image = process_image(image)
-    prediction = model.predict(image)
+    prediction = model_pre(image)
     return class_names[np.argmax(prediction, axis=1)[0]]
                 
                         
 def main():
     st.set_page_config(page_icon=':books:')
     st.header('Plant Disease Classifier')
-    uploaded_file = st.file_uploader("Choose an image...", type="jpg")
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
            
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
@@ -44,9 +50,9 @@ def main():
         st.write(f"Prediction: {prediction}")
         
         # show Grad-CAM image heatmap
-        heatmap_grad = visual_GradCAM(model, 'block5_conv3', img=image)
+        heatmap_grad = visual_GradCAM(model_xai, 'block5_conv3', img=image)
         # show Grad-CAM image heatmap
-        heatmap_xrai = visual_XRAI(model, img=image)
+        heatmap_xrai = visual_XRAI(model_xai, img=image)
         
         with st.spinner("Processing Visualize..."):
             # Create a figure with two subplots
@@ -70,7 +76,7 @@ def main():
             # Display the plot in Streamlit
             st.image(buf, caption='Heatmaps!', use_column_width=True)
 
-            st.write("In the above two methods. Grad-CAM retrieves all potential influential regions in the image, while XRAI extracts the top 30% most important regions.")
+            st.write("Trong hai phương pháp trên. Grad-CAM truy xuất tất cả các vùng có khả năng ảnh hưởng trong hình ảnh, trong khi XRAI trích xuất 30% vùng quan trọng nhất.")
 
 if __name__ == '__main__':
     main()
