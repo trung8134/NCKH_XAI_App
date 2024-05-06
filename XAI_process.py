@@ -26,7 +26,7 @@ def visual_GradCAM(model, layer, img):
     # Calculate gradients
     with tf.GradientTape() as tape:
         conv_output, preds = grad_model(x)
-        grads = tape.gradient(preds[:, class_idx], conv_output) 
+        grads = tape.gradient(preds[class_idx], conv_output) 
         pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
 
     # Multiply each feature map by its importance (gradients) and compute the heatmap
